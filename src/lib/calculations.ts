@@ -85,6 +85,14 @@ export type StreamId =
   | 'return_ticket'
   | 'advertising'
 
+export const DEFAULT_STREAM_ACTIVE: Record<StreamId, boolean> = {
+  additional_passenger: true,
+  parcels: true,
+  luggage: true,
+  return_ticket: true,
+  advertising: true,
+}
+
 export type StreamResult = {
   id: StreamId
   name: string
@@ -119,7 +127,17 @@ function capturePct(central: number, gross: number): number {
   return gross !== 0 ? central / gross : 0
 }
 
-export function computeProjections(d: Drivers): ProjectionResult {
+function isStreamActive(
+  active: Record<StreamId, boolean> | undefined,
+  id: StreamId,
+): boolean {
+  return active?.[id] !== false
+}
+
+export function computeProjections(
+  d: Drivers,
+  active?: Record<StreamId, boolean>,
+): ProjectionResult {
   // Additional passenger travels
   const addDaily = d.vehicles * d.additional_travels * d.passengers * d.fare
   const addMonthly = addDaily * d.days
@@ -176,10 +194,11 @@ export function computeProjections(d: Drivers): ProjectionResult {
     mk('advertising', 'Advertising', adDaily, adMonthly, adMonthlyCentral),
   ]
 
-  const monthly_gross = streams.reduce((s, x) => s + x.monthly, 0)
-  const monthly_central = streams.reduce((s, x) => s + x.monthly_central, 0)
-  const annual_gross = streams.reduce((s, x) => s + x.annual, 0)
-  const annual_central = streams.reduce((s, x) => s + x.annual_central, 0)
+  const included = streams.filter((x) => isStreamActive(active, x.id))
+  const monthly_gross = included.reduce((s, x) => s + x.monthly, 0)
+  const monthly_central = included.reduce((s, x) => s + x.monthly_central, 0)
+  const annual_gross = included.reduce((s, x) => s + x.annual, 0)
+  const annual_central = included.reduce((s, x) => s + x.annual_central, 0)
 
   return {
     streams,
