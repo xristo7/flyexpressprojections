@@ -29,13 +29,13 @@ export function InputsDrawer() {
       aria-modal="true"
       aria-labelledby={titleId}
       className={[
-        'z-50 flex min-h-0 flex-1 flex-col bg-white shadow-2xl',
+        // Scroll lives on the drawer itself — input cards sit on this surface
+        'scroll-panel z-50 flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain bg-white shadow-2xl',
         'rounded-t-2xl border-t border-slate-200',
-        // Desktop: inset ~100px from left/right so sheet is not edge-flush
         'md:mx-[100px]',
       ].join(' ')}
     >
-      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 md:px-6">
+      <div className="sticky top-0 z-10 flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:px-6">
         <div className="min-w-0">
           <h2 id={titleId} className="text-lg font-bold text-slate-900">
             Inputs
@@ -66,7 +66,8 @@ export function InputsDrawer() {
         </div>
       </div>
 
-      <div className="scroll-panel min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 md:px-6">
+      {/* Padding so card shadows sit fully on the drawer surface */}
+      <div className="px-4 pt-[50px] pb-[70px] md:px-6">
         <InputsForm compact hideHeader />
       </div>
     </div>

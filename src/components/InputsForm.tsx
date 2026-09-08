@@ -100,7 +100,7 @@ export function InputsForm({ compact = false, hideHeader = false }: InputsFormPr
           return (
             <label
               key={meta.key}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-sky-200"
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-md shadow-slate-200/80 transition hover:border-sky-200"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
