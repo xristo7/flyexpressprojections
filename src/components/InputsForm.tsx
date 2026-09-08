@@ -52,6 +52,8 @@ const DRIVER_ICONS: Record<keyof Drivers, LucideIcon> = {
 }
 
 function stepFor(meta: (typeof DRIVER_META)[number], value: number): number {
+  // Currency fields nudge by UGX 500 on +/- 
+  if (meta.unit === 'UGX') return meta.step ?? 500
   return meta.step ?? (Number.isInteger(value) ? 1 : 0.01)
 }
 
