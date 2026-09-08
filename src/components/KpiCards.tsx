@@ -13,9 +13,14 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
 
   const kpis = [
     {
-      label: 'Monthly gross (all streams)',
+      label: 'Monthly gross',
       value: formatUGX(totals.monthly_gross),
       hint: 'Sum of stream monthly turnover',
+    },
+    {
+      label: 'Annual gross',
+      value: formatUGX(totals.annual_gross),
+      hint: 'Monthly gross × 12',
     },
     {
       label: 'Monthly central',
@@ -23,17 +28,17 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
       hint: 'Association capture this month',
     },
     {
-      label: 'Annual gross',
-      value: formatUGX(totals.annual_gross),
-      hint: 'Monthly gross × 12',
+      label: 'Annual central',
+      value: formatUGX(totals.annual_central),
+      hint: 'Monthly central × 12',
     },
   ]
 
   return (
     <section
       className={[
-        'grid gap-3 sm:grid-cols-3',
-        compact ? 'gap-2 sm:gap-3' : 'gap-4',
+        'grid grid-cols-2',
+        compact ? 'gap-2 sm:gap-3' : 'gap-3 sm:gap-4',
         className,
       ]
         .filter(Boolean)
@@ -59,7 +64,7 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
           <p
             className={[
               'mt-1 font-bold tracking-tight text-white sm:mt-2',
-              compact ? 'text-lg sm:text-xl' : 'text-2xl',
+              compact ? 'text-base sm:text-xl' : 'text-xl sm:text-2xl',
             ].join(' ')}
           >
             {kpi.value}
