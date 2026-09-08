@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bus,
@@ -18,7 +19,12 @@ import {
 } from 'lucide-react'
 import { DRIVER_META, type Drivers } from '../lib/calculations'
 import { useDrivers } from './DriversContext'
-import { formatNumber } from '../lib/format'
+import {
+  formatCurrencyAmount,
+  formatRatioAsPercent,
+  parseNumericInput,
+  parsePercentInput,
+} from '../lib/format'
 
 type InputsFormProps = {
   /** Compact padding for drawer; grid is still 1→2 cols */
@@ -52,7 +58,7 @@ const DRIVER_ICONS: Record<keyof Drivers, LucideIcon> = {
 }
 
 function stepFor(meta: (typeof DRIVER_META)[number], value: number): number {
-  // Currency fields nudge by UGX 500 on +/- 
+  // Currency fields nudge by UGX 500 on +/-
   if (meta.unit === 'UGX') return meta.step ?? 500
   return meta.step ?? (Number.isInteger(value) ? 1 : 0.01)
 }
@@ -61,6 +67,110 @@ function roundToStep(value: number, step: number): number {
   const decimals = (String(step).split('.')[1] || '').length
   const factor = 10 ** decimals
   return Math.round(value * factor) / factor
+}
+
+type UnitKind = 'currency' | 'ratio' | 'plain'
+
+function unitKind(unit: string): UnitKind {
+  if (unit === 'UGX') return 'currency'
+  if (unit === 'ratio') return 'ratio'
+  return 'plain'
+}
+
+function displayValue(kind: UnitKind, value: number): string {
+  if (kind === 'currency') return formatCurrencyAmount(value)
+  if (kind === 'ratio') return formatRatioAsPercent(value)
+  // Plain: no thousand separators (type=number friendly); trim trailing zeros
+  if (Number.isInteger(value)) return String(value)
+  return String(Number(value.toFixed(6)))
+}
+
+type AffixedNumberInputProps = {
+  kind: UnitKind
+  value: number
+  step: number
+  label: string
+  onCommit: (next: number) => void
+}
+
+function AffixedNumberInput({ kind, value, step, label, onCommit }: AffixedNumberInputProps) {
+  const [focused, setFocused] = useState(false)
+  const [draft, setDraft] = useState(() => displayValue(kind, value))
+
+  // Sync display when the external value changes (e.g. steppers) and we're not editing
+  useEffect(() => {
+    if (!focused) setDraft(displayValue(kind, value))
+  }, [value, kind, focused])
+
+  const commitFromDraft = (raw: string) => {
+    if (kind === 'ratio') {
+      const parsed = parsePercentInput(raw)
+      if (parsed === null) {
+        setDraft(displayValue(kind, value))
+        return
+      }
+      onCommit(Math.max(0, parsed))
+      return
+    }
+    const parsed = parseNumericInput(raw)
+    if (parsed === null) {
+      setDraft(displayValue(kind, value))
+      return
+    }
+    onCommit(Math.max(0, parsed))
+  }
+
+  const useTextInput = kind === 'currency' || kind === 'ratio'
+
+  return (
+    <div className="relative flex min-w-0 flex-1 items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-600">
+      {kind === 'currency' && (
+        <span className="pointer-events-none select-none pl-3 text-xs font-medium text-slate-400">
+          UGX
+        </span>
+      )}
+      <input
+        type={useTextInput ? 'text' : 'number'}
+        inputMode="decimal"
+        min={useTextInput ? undefined : 0}
+        step={useTextInput ? undefined : step}
+        aria-label={label}
+        value={focused ? draft : displayValue(kind, value)}
+        onFocus={() => {
+          setFocused(true)
+          setDraft(displayValue(kind, value))
+        }}
+        onChange={(e) => {
+          const raw = e.target.value
+          setDraft(raw)
+          if (kind === 'ratio') {
+            const parsed = parsePercentInput(raw)
+            if (parsed !== null) onCommit(Math.max(0, parsed))
+            return
+          }
+          if (kind === 'currency') {
+            const parsed = parseNumericInput(raw)
+            if (parsed !== null) onCommit(Math.max(0, parsed))
+            return
+          }
+          const next = Number(raw)
+          if (Number.isFinite(next)) onCommit(Math.max(0, next))
+        }}
+        onBlur={() => {
+          setFocused(false)
+          commitFromDraft(draft)
+        }}
+        className={`min-w-0 flex-1 bg-transparent py-2 text-center text-sm font-medium text-slate-900 outline-none ${
+          kind === 'currency' ? 'pr-3 pl-1.5' : kind === 'ratio' ? 'pr-1.5 pl-3' : 'px-3'
+        }`}
+      />
+      {kind === 'ratio' && (
+        <span className="pointer-events-none select-none pr-3 text-xs font-medium text-slate-400">
+          %
+        </span>
+      )}
+    </div>
+  )
 }
 
 export function InputsForm({ compact = false, hideHeader = false }: InputsFormProps) {
@@ -91,6 +201,9 @@ export function InputsForm({ compact = false, hideHeader = false }: InputsFormPr
           const Icon = DRIVER_ICONS[meta.key]
           const value = drivers[meta.key]
           const step = stepFor(meta, value)
+          const kind = unitKind(meta.unit)
+          // Soften unit pill when in-field affixes already convey currency / %
+          const showUnitPill = kind === 'plain'
 
           const bump = (dir: -1 | 1) => {
             const next = roundToStep(value + dir * step, step)
@@ -114,9 +227,16 @@ export function InputsForm({ compact = false, hideHeader = false }: InputsFormPr
                   </span>
                   <span className="mt-1 block text-xs text-slate-500">{meta.purpose}</span>
                 </div>
-                <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-600">
-                  {meta.unit}
-                </span>
+                {showUnitPill && (
+                  <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-600">
+                    {meta.unit}
+                  </span>
+                )}
+                {kind === 'ratio' && (
+                  <span className="rounded-full bg-slate-50 px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-slate-400">
+                    %
+                  </span>
+                )}
               </div>
 
               <div className="mt-3 flex items-center gap-2">
@@ -132,16 +252,12 @@ export function InputsForm({ compact = false, hideHeader = false }: InputsFormPr
                 >
                   <Minus className="h-4 w-4" aria-hidden="true" strokeWidth={2.5} />
                 </button>
-                <input
-                  type="number"
-                  min={0}
-                  step={step}
+                <AffixedNumberInput
+                  kind={kind}
                   value={value}
-                  onChange={(e) => {
-                    const next = Number(e.target.value)
-                    if (Number.isFinite(next)) setDriver(meta.key, Math.max(0, next))
-                  }}
-                  className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-sm font-medium text-slate-900 outline-none ring-sky-600 focus:bg-white focus:ring-2"
+                  step={step}
+                  label={meta.label}
+                  onCommit={(next) => setDriver(meta.key, next)}
                 />
                 <button
                   type="button"
@@ -155,10 +271,6 @@ export function InputsForm({ compact = false, hideHeader = false }: InputsFormPr
                   <Plus className="h-4 w-4" aria-hidden="true" strokeWidth={2.5} />
                 </button>
               </div>
-
-              <p className="mt-2 text-xs text-slate-500">
-                Current: {formatNumber(value)} · step {step}
-              </p>
             </label>
           )
         })}

@@ -61,3 +61,37 @@ export function formatNumber(value: number, digits = 2): string {
 export function formatPct(ratio: number): string {
   return `${numberFormatter.format(ratio * 100)}%`
 }
+
+/** Format a UGX amount with thousand commas (no currency symbol). */
+export function formatCurrencyAmount(value: number): string {
+  return ugxAmountFormatter.format(Math.round(Math.max(0, value)))
+}
+
+/**
+ * Parse a currency/plain numeric string: strip commas & spaces.
+ * Returns null if empty or non-numeric.
+ */
+export function parseNumericInput(raw: string): number | null {
+  const cleaned = raw.replace(/[,\s]/g, '').trim()
+  if (cleaned === '' || cleaned === '-' || cleaned === '.') return null
+  const n = Number(cleaned)
+  if (!Number.isFinite(n)) return null
+  return n
+}
+
+/** Display a 0–1 ratio as a percentage figure (no % sign). */
+export function formatRatioAsPercent(ratio: number): string {
+  return numberFormatter.format(ratio * 100)
+}
+
+/**
+ * Parse a percentage display string back to a 0–1 ratio.
+ * Strips commas, spaces, and a trailing %.
+ */
+export function parsePercentInput(raw: string): number | null {
+  const cleaned = raw.replace(/[,\s%]/g, '').trim()
+  if (cleaned === '' || cleaned === '-' || cleaned === '.') return null
+  const n = Number(cleaned)
+  if (!Number.isFinite(n)) return null
+  return n / 100
+}
