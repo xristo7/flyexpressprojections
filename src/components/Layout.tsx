@@ -49,7 +49,7 @@ export function Layout({ children }: { children: ReactNode }) {
                     summaryActive
                       ? 'bg-sky-700 text-white shadow-sm'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
-                  ].join(' ')}
+                  ].join(' ')
                 }
               >
                 Summary
