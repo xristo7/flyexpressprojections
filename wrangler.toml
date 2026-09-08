@@ -1,11 +1,8 @@
-# Optional: Cloudflare Pages / Wrangler notes
-# This is a static Vite SPA. Prefer connecting the GitHub repo in the
-# Cloudflare Pages dashboard rather than deploying with Wrangler directly.
-#
-# Dashboard settings:
-#   Framework preset: Vite
-#   Build command:    npm run build
-#   Build output:     dist
-#   Root directory:   /
-#
-# SPA routing is handled by public/_redirects (/* -> /index.html 200).
+name = "flyexpressprojections"
+compatibility_date = "2026-09-08"
+pages_build_output_dir = "./dist"
+
+# Cloudflare Pages (Git):
+#   Build command: npm run build
+#   Build output:  dist
+# SPA routing: public/_redirects (/* /index.html 200) plus dist/404.html copy of index.html
