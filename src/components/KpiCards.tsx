@@ -1,5 +1,5 @@
 import { useDrivers } from './DriversContext'
-import { formatUGX } from '../lib/format'
+import { formatUGX, formatUGXCompact } from '../lib/format'
 
 type KpiCardsProps = {
   /** Compact padding / type for sticky strip above the inputs drawer */
@@ -14,22 +14,22 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
   const kpis = [
     {
       label: 'Monthly gross',
-      value: formatUGX(totals.monthly_gross),
+      amount: totals.monthly_gross,
       hint: 'Sum of stream monthly turnover',
     },
     {
       label: 'Annual gross',
-      value: formatUGX(totals.annual_gross),
+      amount: totals.annual_gross,
       hint: 'Monthly gross × 12',
     },
     {
       label: 'Monthly central',
-      value: formatUGX(totals.monthly_central),
+      amount: totals.monthly_central,
       hint: 'Association capture this month',
     },
     {
       label: 'Annual central',
-      value: formatUGX(totals.annual_central),
+      amount: totals.annual_central,
       hint: 'Monthly central × 12',
     },
   ]
@@ -45,33 +45,39 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
         .join(' ')}
       aria-label="Key performance indicators"
     >
-      {kpis.map((kpi) => (
-        <article
-          key={kpi.label}
-          className={[
-            'rounded-2xl border border-white/15 bg-[#0b3d91] text-white shadow-sm',
-            compact ? 'p-3 sm:p-4' : 'p-5',
-          ].join(' ')}
-        >
-          <p
+      {kpis.map((kpi) => {
+        const full = formatUGX(kpi.amount)
+        const short = formatUGXCompact(kpi.amount)
+        return (
+          <article
+            key={kpi.label}
             className={[
-              'font-medium text-white/80',
-              compact ? 'text-xs sm:text-sm' : 'text-sm',
+              'rounded-2xl border border-white/15 bg-[#0b3d91] text-white shadow-sm',
+              compact ? 'p-3 sm:p-4' : 'p-5',
             ].join(' ')}
           >
-            {kpi.label}
-          </p>
-          <p
-            className={[
-              'mt-1 font-bold tracking-tight text-white sm:mt-2',
-              compact ? 'text-base sm:text-xl' : 'text-xl sm:text-2xl',
-            ].join(' ')}
-          >
-            {kpi.value}
-          </p>
-          {!compact && <p className="mt-2 text-xs text-white/70">{kpi.hint}</p>}
-        </article>
-      ))}
+            <p
+              className={[
+                'font-medium text-white/80',
+                compact ? 'text-xs sm:text-sm' : 'text-sm',
+              ].join(' ')}
+            >
+              {kpi.label}
+            </p>
+            <p
+              className={[
+                'mt-1 font-bold tracking-tight text-white sm:mt-2',
+                compact ? 'text-base sm:text-xl' : 'text-xl sm:text-2xl',
+              ].join(' ')}
+              title={full}
+            >
+              <span className="sm:hidden">{short}</span>
+              <span className="hidden sm:inline">{full}</span>
+            </p>
+            {!compact && <p className="mt-2 text-xs text-white/70">{kpi.hint}</p>}
+          </article>
+        )
+      })}
     </section>
   )
 }
