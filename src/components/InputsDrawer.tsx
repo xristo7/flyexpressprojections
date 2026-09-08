@@ -23,21 +23,20 @@ export function InputsDrawer() {
 
   return (
     <>
-      {/* Backdrop — covers uncovered area only; desktop left ~2/3, mobile top ~1/2 */}
+      {/* Backdrop — remaining top area above the bottom sheet */}
       <div
         aria-hidden={!open}
         className={[
           'fixed z-40 bg-slate-900/40 transition-opacity duration-300',
-          // Mobile: top half
-          'inset-x-0 top-0 h-[50dvh] md:h-auto',
-          // Desktop: left 2/3
-          'md:inset-y-0 md:left-0 md:right-[min(100%,33.333vw)] md:w-auto',
+          'inset-x-0 top-0',
+          // Mobile: top half; desktop: top ~2/3
+          'h-[50dvh] md:h-[66.667dvh]',
           open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
         ].join(' ')}
         onClick={closeDrawer}
       />
 
-      {/* Drawer panel */}
+      {/* Bottom sheet on all breakpoints */}
       <div
         ref={panelRef}
         role="dialog"
@@ -46,13 +45,10 @@ export function InputsDrawer() {
         aria-hidden={!open}
         className={[
           'fixed z-50 flex flex-col bg-white shadow-2xl transition-transform duration-300 ease-out',
-          // Mobile: bottom half
-          'inset-x-0 bottom-0 h-[50dvh] rounded-t-2xl border-t border-slate-200',
+          'inset-x-0 bottom-0 rounded-t-2xl border-t border-slate-200',
+          // Mobile ≈ half; desktop ≈ one third
+          'h-[50dvh] md:h-[33.333dvh]',
           'translate-y-full data-[open=true]:translate-y-0',
-          // Desktop: right third
-          'md:inset-y-0 md:right-0 md:bottom-auto md:left-auto',
-          'md:h-full md:w-[min(100%,33.333vw)] md:min-w-[320px] md:rounded-none md:border-t-0 md:border-l md:border-slate-200',
-          'md:translate-y-0 md:translate-x-full md:data-[open=true]:translate-x-0',
           open ? 'pointer-events-auto' : 'pointer-events-none',
         ].join(' ')}
         data-open={open}

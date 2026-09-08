@@ -1,15 +1,10 @@
 import { useDrivers } from '../components/DriversContext'
+import { KpiCards } from '../components/KpiCards'
 import { formatPct, formatUGX } from '../lib/format'
 
 export function SummaryPage() {
   const { projections } = useDrivers()
   const { streams, totals } = projections
-
-  const kpis = [
-    { label: 'Monthly gross (all streams)', value: formatUGX(totals.monthly_gross), hint: 'Sum of stream monthly turnover' },
-    { label: 'Monthly central', value: formatUGX(totals.monthly_central), hint: 'Association capture this month' },
-    { label: 'Annual gross', value: formatUGX(totals.annual_gross), hint: 'Monthly gross × 12' },
-  ]
 
   const rows = [
     ...streams,
@@ -36,18 +31,7 @@ export function SummaryPage() {
         </p>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        {kpis.map((kpi) => (
-          <article
-            key={kpi.label}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-          >
-            <p className="text-sm font-medium text-slate-500">{kpi.label}</p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">{kpi.value}</p>
-            <p className="mt-2 text-xs text-slate-500">{kpi.hint}</p>
-          </article>
-        ))}
-      </section>
+      <KpiCards />
 
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 px-5 py-4">
