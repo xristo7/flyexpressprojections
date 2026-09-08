@@ -7,6 +7,9 @@
   --accent: #f59e0b;
   --surface: #f8fafc;
   --ink: #0f172a;
+  --scrollbar-thumb: color-mix(in srgb, var(--brand) 45%, #94a3b8);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--brand) 70%, #64748b);
+  --scrollbar-track: transparent;
 }
 
 body {
@@ -22,4 +25,34 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+/* Smooth scrolling + custom modern scrollbars for main + drawer panels */
+.scroll-panel {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.scroll-panel::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scroll-panel::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 999px;
+}
+
+.scroll-panel::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.scroll-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: padding-box;
+  border: 2px solid transparent;
 }
