@@ -1,1 +1,2 @@
-/*    /index.html   200
+# SPA fallback: serve the app shell for client routes
+/* /index.html 200
