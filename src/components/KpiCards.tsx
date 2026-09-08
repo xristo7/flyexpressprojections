@@ -1,10 +1,35 @@
 import { useDrivers } from './DriversContext'
-import { formatUGX, formatUGXCompact } from '../lib/format'
+import { formatUShCompactParts, formatUShParts } from '../lib/format'
 
 type KpiCardsProps = {
   /** Compact padding / type for sticky strip above the inputs drawer */
   compact?: boolean
   className?: string
+}
+
+function MoneyValue({
+  amount,
+  compactDisplay,
+  className,
+}: {
+  amount: number
+  /** When true, prefer compact K/M/B (used on mobile) */
+  compactDisplay: boolean
+  className?: string
+}) {
+  const full = formatUShParts(amount)
+  const short = formatUShCompactParts(amount)
+  const parts = compactDisplay ? short : full
+  const title = `USh ${full.amount}`
+
+  return (
+    <p className={className} title={title}>
+      <span className="mr-1 text-[0.65em] font-medium tracking-wide text-white/45">
+        {parts.symbol}
+      </span>
+      <span>{parts.amount}</span>
+    </p>
+  )
 }
 
 export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
@@ -37,47 +62,55 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
   return (
     <section
       className={[
-        'grid grid-cols-2',
-        compact ? 'gap-2 sm:gap-3' : 'gap-3 sm:gap-4',
+        // Mobile: 2×2 pairs; desktop: four columns with full amounts
+        'grid grid-cols-2 md:grid-cols-4',
+        compact ? 'gap-2 md:gap-3' : 'gap-3 md:gap-4',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
       aria-label="Key performance indicators"
     >
-      {kpis.map((kpi) => {
-        const full = formatUGX(kpi.amount)
-        const short = formatUGXCompact(kpi.amount)
-        return (
-          <article
-            key={kpi.label}
+      {kpis.map((kpi) => (
+        <article
+          key={kpi.label}
+          className={[
+            'rounded-2xl border border-white/15 bg-[#0b3d91] text-white shadow-sm',
+            compact ? 'p-3 md:p-4' : 'p-4 md:p-5',
+          ].join(' ')}
+        >
+          <p
             className={[
-              'rounded-2xl border border-white/15 bg-[#0b3d91] text-white shadow-sm',
-              compact ? 'p-3 sm:p-4' : 'p-5',
+              'font-medium text-white/80',
+              compact ? 'text-xs md:text-sm' : 'text-sm',
             ].join(' ')}
           >
-            <p
+            {kpi.label}
+          </p>
+          {/* Mobile: compact K/M/B; desktop (md+): full amount — both use muted USh */}
+          <div className="md:hidden">
+            <MoneyValue
+              amount={kpi.amount}
+              compactDisplay
               className={[
-                'font-medium text-white/80',
-                compact ? 'text-xs sm:text-sm' : 'text-sm',
+                'mt-1 font-bold tracking-tight text-white',
+                compact ? 'text-base' : 'text-xl',
               ].join(' ')}
-            >
-              {kpi.label}
-            </p>
-            <p
+            />
+          </div>
+          <div className="hidden md:block">
+            <MoneyValue
+              amount={kpi.amount}
+              compactDisplay={false}
               className={[
-                'mt-1 font-bold tracking-tight text-white sm:mt-2',
-                compact ? 'text-base sm:text-xl' : 'text-xl sm:text-2xl',
+                'mt-2 font-bold tracking-tight text-white',
+                compact ? 'text-lg lg:text-xl' : 'text-xl lg:text-2xl',
               ].join(' ')}
-              title={full}
-            >
-              <span className="sm:hidden">{short}</span>
-              <span className="hidden sm:inline">{full}</span>
-            </p>
-            {!compact && <p className="mt-2 text-xs text-white/70">{kpi.hint}</p>}
-          </article>
-        )
-      })}
+            />
+          </div>
+          {!compact && <p className="mt-2 text-xs text-white/70">{kpi.hint}</p>}
+        </article>
+      ))}
     </section>
   )
 }
