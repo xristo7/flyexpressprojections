@@ -10,6 +10,7 @@
     "test:calcs": "node scripts/verify-defaults.mjs"
   },
   "dependencies": {
+    "lucide-react": "^1.43.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.0"

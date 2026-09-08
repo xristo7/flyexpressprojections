@@ -44,13 +44,13 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
         <article
           key={kpi.label}
           className={[
-            'rounded-2xl border border-slate-200 bg-white shadow-sm',
+            'rounded-2xl border border-white/15 bg-[#0b3d91] text-white shadow-sm',
             compact ? 'p-3 sm:p-4' : 'p-5',
           ].join(' ')}
         >
           <p
             className={[
-              'font-medium text-slate-500',
+              'font-medium text-white/80',
               compact ? 'text-xs sm:text-sm' : 'text-sm',
             ].join(' ')}
           >
@@ -58,13 +58,13 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
           </p>
           <p
             className={[
-              'mt-1 font-bold tracking-tight text-slate-900 sm:mt-2',
+              'mt-1 font-bold tracking-tight text-white sm:mt-2',
               compact ? 'text-lg sm:text-xl' : 'text-2xl',
             ].join(' ')}
           >
             {kpi.value}
           </p>
-          {!compact && <p className="mt-2 text-xs text-slate-500">{kpi.hint}</p>}
+          {!compact && <p className="mt-2 text-xs text-white/70">{kpi.hint}</p>}
         </article>
       ))}
     </section>

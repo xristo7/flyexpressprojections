@@ -35,7 +35,7 @@ export function SummaryPage() {
 
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 px-5 py-4">
-          <h3 className="text-lg font-semibold text-slate-900">Stream table</h3>
+          <h3 className="text-lg font-semibold text-slate-900">Income table</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
