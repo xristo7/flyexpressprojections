@@ -16,27 +16,26 @@ export function InputsDrawer() {
       if (e.key === 'Escape') closeDrawer()
     }
     window.addEventListener('keydown', onKey)
-    // Focus close button when opening
     closeBtnRef.current?.focus()
     return () => window.removeEventListener('keydown', onKey)
   }, [open, closeDrawer])
 
   return (
     <>
-      {/* Backdrop — remaining top area above the bottom sheet */}
+      {/*
+        Mobile: no separate dimmed strip — the sheet sits flush under the KPI
+        cards and covers Projection Summary. Desktop keeps a short sheet + backdrop.
+      */}
       <div
         aria-hidden={!open}
         className={[
           'fixed z-40 bg-slate-900/40 transition-opacity duration-300',
-          'inset-x-0 top-0',
-          // Mobile: top half; desktop: top ~2/3
-          'h-[50dvh] md:h-[66.667dvh]',
+          'inset-x-0 top-0 hidden md:block md:h-[66.667dvh]',
           open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
         ].join(' ')}
         onClick={closeDrawer}
       />
 
-      {/* Bottom sheet on all breakpoints */}
       <div
         ref={panelRef}
         role="dialog"
@@ -44,12 +43,17 @@ export function InputsDrawer() {
         aria-labelledby={titleId}
         aria-hidden={!open}
         className={[
-          'fixed z-50 flex flex-col bg-white shadow-2xl transition-transform duration-300 ease-out',
-          'inset-x-0 bottom-0 rounded-t-2xl border-t border-slate-200',
-          // Mobile ≈ half; desktop ≈ one third
-          'h-[50dvh] md:h-[33.333dvh]',
-          'translate-y-full data-[open=true]:translate-y-0',
-          open ? 'pointer-events-auto' : 'pointer-events-none',
+          'z-50 flex flex-col bg-white shadow-2xl transition-transform duration-300 ease-out',
+          'rounded-t-2xl border-t border-slate-200',
+          // Mobile: fill remaining viewport under header+cards (in-flow flex child)
+          'min-h-0 flex-1 md:flex-none',
+          // Desktop: fixed bottom third
+          'md:fixed md:inset-x-0 md:bottom-0 md:h-[33.333dvh]',
+          'md:translate-y-full md:data-[open=true]:translate-y-0',
+          // Mobile slide: still animate with translate when using fixed... use in-flow so
+          // when closed, don't take space — on mobile hide when closed via max-height/hidden
+          open ? 'pointer-events-auto' : 'pointer-events-none max-md:hidden',
+          open ? '' : 'md:pointer-events-none',
         ].join(' ')}
         data-open={open}
       >
