@@ -5,7 +5,7 @@ const d = {
   passengers: 12,
   fare: 5000,
   additional_travels: 0.5,
-  central_per_travel: 15000,
+  central_per_travel: 10000,
 }
 
 const daily = d.vehicles * d.additional_travels * d.passengers * d.fare
@@ -13,7 +13,7 @@ const monthly = daily * d.days
 const monthly_central = d.vehicles * d.additional_travels * d.days * d.central_per_travel
 
 const EXPECT_MONTHLY = 132600000
-const EXPECT_CENTRAL = 33150000
+const EXPECT_CENTRAL = 22100000
 
 let failed = false
 if (monthly !== EXPECT_MONTHLY) {

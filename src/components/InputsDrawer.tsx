@@ -29,13 +29,20 @@ export function InputsDrawer() {
       aria-modal="true"
       aria-labelledby={titleId}
       className={[
-        // Scroll lives on the drawer itself — input cards sit on this surface
-        'scroll-panel z-50 flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain bg-white shadow-2xl',
+        'z-50 flex min-h-0 flex-1 flex-col bg-white shadow-2xl',
         'rounded-t-2xl border-t border-slate-200',
         'md:mx-[100px]',
+        // Mobile: drawer itself scrolls (current good behavior)
+        'max-md:scroll-panel max-md:overflow-y-auto max-md:overscroll-contain',
       ].join(' ')}
     >
-      <div className="sticky top-0 z-10 flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:px-6">
+      <div
+        className={[
+          'flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 md:px-6',
+          // Mobile sticky header while drawer scrolls
+          'max-md:sticky max-md:top-0 max-md:z-10 max-md:bg-white/95 max-md:backdrop-blur',
+        ].join(' ')}
+      >
         <div className="min-w-0">
           <h2 id={titleId} className="text-lg font-bold text-slate-900">
             Inputs
@@ -66,8 +73,16 @@ export function InputsDrawer() {
         </div>
       </div>
 
-      {/* Padding so card shadows sit fully on the drawer surface */}
-      <div className="px-4 pt-[50px] pb-[70px] md:px-6">
+      {/*
+        Desktop: scroll this padded surface so cards never bleed under the header.
+        Mobile: padding only — outer drawer scrolls.
+      */}
+      <div
+        className={[
+          'px-4 pt-[50px] pb-[70px] md:px-6',
+          'md:scroll-panel md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain',
+        ].join(' ')}
+      >
         <InputsForm compact hideHeader />
       </div>
     </div>
