@@ -86,7 +86,7 @@ export function InputsForm({ compact = false, hideHeader = false }: InputsFormPr
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {DRIVER_META.map((meta) => {
           const Icon = DRIVER_ICONS[meta.key]
           const value = drivers[meta.key]

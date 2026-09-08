@@ -26,16 +26,13 @@ export function Layout({ children }: { children: ReactNode }) {
       ].join(' ')}
     >
       {/*
-        When inputs are open on mobile: upper region is ONLY header + KPI cards
-        (shrink-to-fit). The drawer fills the rest of the viewport and covers
-        Projection Summary / income table. Desktop keeps a shorter sheet.
+        When inputs are open: upper region is ONLY header + KPI cards.
+        Drawer fills the rest and covers Projection Summary on all breakpoints.
       */}
       <div
         className={[
           'flex min-h-0 flex-col',
-          open
-            ? 'shrink-0 md:h-[66.667dvh] md:max-h-[66.667dvh] md:flex-none'
-            : 'flex-1',
+          open ? 'shrink-0' : 'flex-1',
         ].join(' ')}
       >
         <header className="sticky top-0 z-20 shrink-0 border-b border-slate-200/80 bg-white/80 backdrop-blur">
@@ -83,11 +80,10 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         )}
 
-        {/* Hide main/footer under the mobile drawer so only cards stay visible */}
         <main
           className={[
             'scroll-panel mx-auto w-full max-w-6xl flex-1 px-4 py-8',
-            open ? 'hidden min-h-0 overflow-y-auto md:block' : '',
+            open ? 'hidden' : '',
           ].join(' ')}
         >
           {children}
