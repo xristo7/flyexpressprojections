@@ -5,8 +5,8 @@ import {
   type StreamId,
 } from './calculations'
 
-const STORAGE_KEY = 'flyexpress.drivers.v1'
-const STREAM_ACTIVE_KEY = 'flyexpress.streamActive.v1'
+const STORAGE_KEY = 'flyexpress.drivers.v2'
+const STREAM_ACTIVE_KEY = 'flyexpress.streamActive.v2'
 
 export function loadDrivers(): Drivers {
   try {
