@@ -53,13 +53,13 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
       label: 'Monthly central',
       amount: totals.monthly_central,
       hint: 'Association capture this month',
-      tone: 'army' as const,
+      tone: 'green' as const,
     },
     {
       label: 'Annual central',
       amount: totals.annual_central,
       hint: 'Monthly central × 12',
-      tone: 'army' as const,
+      tone: 'green' as const,
     },
   ]
 
@@ -80,7 +80,7 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
           key={kpi.label}
           className={[
             'rounded-2xl border border-white/15 text-white shadow-sm',
-            kpi.tone === 'army' ? 'bg-[#4B5320]' : 'bg-[#0b3d91]',
+            kpi.tone === 'green' ? 'bg-[#15803d]' : 'bg-[#0b3d91]',
             compact ? 'p-3 md:p-4' : 'p-4 md:p-5',
           ].join(' ')}
         >
