@@ -41,21 +41,25 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
       label: 'Monthly gross',
       amount: totals.monthly_gross,
       hint: 'Sum of stream monthly turnover',
+      tone: 'navy' as const,
     },
     {
       label: 'Annual gross',
       amount: totals.annual_gross,
       hint: 'Monthly gross × 12',
+      tone: 'navy' as const,
     },
     {
       label: 'Monthly central',
       amount: totals.monthly_central,
       hint: 'Association capture this month',
+      tone: 'army' as const,
     },
     {
       label: 'Annual central',
       amount: totals.annual_central,
       hint: 'Monthly central × 12',
+      tone: 'army' as const,
     },
   ]
 
@@ -75,7 +79,8 @@ export function KpiCards({ compact = false, className = '' }: KpiCardsProps) {
         <article
           key={kpi.label}
           className={[
-            'rounded-2xl border border-white/15 bg-[#0b3d91] text-white shadow-sm',
+            'rounded-2xl border border-white/15 text-white shadow-sm',
+            kpi.tone === 'army' ? 'bg-[#4B5320]' : 'bg-[#0b3d91]',
             compact ? 'p-3 md:p-4' : 'p-4 md:p-5',
           ].join(' ')}
         >
